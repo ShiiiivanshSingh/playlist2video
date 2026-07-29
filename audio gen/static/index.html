@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>audio grabber</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0e0d;
+  --panel: #17160f;
+  --panel2: #1d1c15;
+  --border: #2c2924;
+  --text: #eae6df;
+  --muted: #8a8378;
+  --accent: #e8a33d;
+  --error: #d9695f;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 48px 20px;
+}
+.wrap {
+  width: 100%;
+  max-width: 660px;
+}
+h1 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 4px;
+}
+.sub {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 22px;
+}
+.settings-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  color: var(--muted);
+}
+select {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12.5px;
+  padding: 7px 10px;
+  border-radius: 5px;
+}
+details {
+  flex: 1;
+}
+summary {
+  cursor: pointer;
+  list-style: none;
+  color: var(--muted);
+  transition: color 0.15s ease;
+}
+summary::-webkit-details-marker { display: none; }
+summary:hover { color: var(--accent); }
+summary .label { color: var(--muted); }
+#output-dir-display {
+  color: var(--text);
+}
+#output-dir-override {
+  margin-top: 8px;
+  width: 100%;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 12px;
+  border-radius: 5px;
+  outline: none;
+}
+#output-dir-override:focus { border-color: var(--accent); }
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+}
+.tab {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  padding: 9px 4px;
+  margin-right: 18px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transform: translateY(1px);
+}
+.tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+input[type="text"] {
+  flex: 1;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+input[type="text"]:focus { border-color: var(--accent); }
+input[type="text"]::placeholder { color: #5c574d; }
+.drop-zone {
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  padding: 4px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.drop-zone.drag-active {
+  border-color: var(--accent);
+  background: #1a1712;
+}
+textarea {
+  width: 100%;
+  min-height: 110px;
+  background: var(--panel2);
+  border: none;
+  color: var(--text);
+  padding: 12px 14px;
+  font-family: inherit;
+  font-size: 12.5px;
+  border-radius: 5px;
+  outline: none;
+  resize: vertical;
+  display: block;
+}
+.file-label {
+  display: block;
+  text-align: center;
+  padding: 8px 0 4px;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+.file-pick {
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.action-row { margin-top: 4px; }
+button {
+  background: var(--accent);
+  border: none;
+  color: #1a1408;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  padding: 0 22px;
+  height: 40px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+button:hover { opacity: 0.92; }
+button:active { transform: scale(0.98); }
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+  transform: none;
+}
+button.primary { flex: 1; }
+button.ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  flex: 0 0 auto;
+}
+button.ghost:hover { color: var(--error); border-color: var(--error); opacity: 1; }
+button.small-btn {
+  height: 28px;
+  padding: 0 12px;
+  font-size: 11px;
+  margin-top: 10px;
+}
+.progress-wrap {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 4px;
+}
+.progress-track {
+  flex: 1;
+  height: 5px;
+  background: var(--panel2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 4%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.35s ease;
+}
+.progress-label {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  font-size: 12.5px;
+  color: var(--muted);
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-top: 14px;
+}
+.log-panel {
+  min-height: 20px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.log-panel:empty { display: none; }
+.result-panel { color: var(--text); font-size: 13px; }
+.history-details {
+  margin-top: 26px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.history-list { margin-top: 10px; }
+.history-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+}
+.history-row:hover .history-name { color: var(--accent); }
+.history-name {
+  color: var(--text);
+  font-size: 12.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s ease;
+}
+.history-meta {
+  color: var(--muted);
+  font-size: 11px;
+  flex: 0 0 auto;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>audio grabber</h1>
+  <p class="sub">song, YouTube playlist, or a pasted tracklist</p>
+
+  <div class="settings-bar">
+    <select id="format">
+      <option value="mp3">mp3 · 320kbps</option>
+      <option value="flac">flac · lossless</option>
+    </select>
+    <details>
+      <summary><span class="label">saving to</span> <span id="output-dir-display">...</span></summary>
+      <input type="text" id="output-dir-override" placeholder="custom folder path, leave blank for default">
+    </details>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="single">single</button>
+    <button class="tab" data-tab="tracklist">tracklist</button>
+  </div>
+
+  <div class="tab-panel active" id="panel-single">
+    <div class="row">
+      <input type="text" id="query" placeholder="Blinding Lights The Weeknd, or a YouTube playlist link">
+    </div>
+    <div class="row">
+      <input type="text" id="single-name" placeholder="file name (optional)">
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-tracklist">
+    <div class="row">
+      <input type="text" id="tracklist-name" placeholder="playlist name (optional)">
+    </div>
+    <div class="drop-zone" id="drop-zone">
+      <textarea id="tracklist-text" placeholder="Artist,Artist - Song Title&#10;Artist - Song Title&#10;...or paste JSON"></textarea>
+      <label class="file-label" for="tracklist-file">drop a .txt/.json file here, or <span class="file-pick">browse</span></label>
+      <input type="file" id="tracklist-file" hidden accept=".txt,.json,text/plain,application/json">
+    </div>
+  </div>
+
+  <div class="row action-row">
+    <button id="go" class="primary">go</button>
+    <button id="cancel" class="ghost" style="display:none">cancel</button>
+  </div>
+
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <span class="progress-label" id="progress-label"></span>
+  </div>
+
+  <div id="log" class="panel log-panel"></div>
+
+  <div id="result" class="panel result-panel" style="display:none">
+    <div id="result-text"></div>
+    <button id="copy-path" class="ghost small-btn" style="display:none">copy path</button>
+  </div>
+
+  <details class="history-details">
+    <summary>recent downloads (<span id="history-count">0</span>)</summary>
+    <div id="history-list" class="history-list"></div>
+  </details>
+</div>
+
+<script>
+const formatSel = document.getElementById('format');
+const outputDirDisplay = document.getElementById('output-dir-display');
+const outputDirOverride = document.getElementById('output-dir-override');
+
+const tabs = document.querySelectorAll('.tab');
+const panels = {single: document.getElementById('panel-single'), tracklist: document.getElementById('panel-tracklist')};
+let activeTab = 'single';
+
+const queryInput = document.getElementById('query');
+const singleNameInput = document.getElementById('single-name');
+const tracklistNameInput = document.getElementById('tracklist-name');
+const tracklistText = document.getElementById('tracklist-text');
+const tracklistFile = document.getElementById('tracklist-file');
+const dropZone = document.getElementById('drop-zone');
+
+const goBtn = document.getElementById('go');
+const cancelBtn = document.getElementById('cancel');
+const progressWrap = document.getElementById('progress-wrap');
+const progressFill = document.getElementById('progress-fill');
+const progressLabel = document.getElementById('progress-label');
+const logBox = document.getElementById('log');
+const resultBox = document.getElementById('result');
+const resultText = document.getElementById('result-text');
+const copyBtn = document.getElementById('copy-path');
+const historyList = document.getElementById('history-list');
+const historyCount = document.getElementById('history-count');
+
+let currentJobId = null;
+let notifyAsked = false;
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    Object.values(panels).forEach(p => p.classList.remove('active'));
+    activeTab = tab.dataset.tab;
+    panels[activeTab].classList.add('active');
+  });
+});
+
+function parsePastedLine(line) {
+  line = line.trim();
+  if (!line) return null;
+  const idx = line.indexOf(' - ');
+  if (idx === -1) return null;
+  const artistsPart = line.slice(0, idx);
+  const title = line.slice(idx + 3).trim();
+  const artists = artistsPart.split(',').map(a => a.trim()).filter(Boolean);
+  if (!title || !artists.length) return null;
+  return {song: title, artist: artists.join(', ')};
+}
+
+function parseTracklistInput(raw) {
+  const trimmed = raw.trim();
+  try {
+    const parsed = JSON.parse(trimmed);
+    if (Array.isArray(parsed)) return parsed;
+  } catch (e) {}
+  const tracks = [];
+  for (const line of trimmed.split('\n')) {
+    const parsed = parsePastedLine(line);
+    if (parsed) tracks.push(parsed);
+  }
+  return tracks;
+}
+
+function readTracklistFile(file) {
+  const reader = new FileReader();
+  reader.onload = () => { tracklistText.value = reader.result; };
+  reader.readAsText(file);
+  if (!tracklistNameInput.value) {
+    tracklistNameInput.value = file.name.replace(/\.(json|txt)$/i, '');
+  }
+}
+
+tracklistFile.addEventListener('change', () => {
+  const file = tracklistFile.files[0];
+  if (file) readTracklistFile(file);
+});
+
+['dragover', 'dragenter'].forEach(evt => {
+  dropZone.addEventListener(evt, (e) => {
+    e.preventDefault();
+    dropZone.classList.add('drag-active');
+  });
+});
+['dragleave', 'drop'].forEach(evt => {
+  dropZone.addEventListener(evt, (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-active');
+  });
+});
+dropZone.addEventListener('drop', (e) => {
+  const file = e.dataTransfer.files[0];
+  if (file) readTracklistFile(file);
+});
+
+function resetPanels() {
+  logBox.textContent = '';
+  resultBox.style.display = 'none';
+  resultText.textContent = '';
+  copyBtn.style.display = 'none';
+}
+
+function showError(message) {
+  resultBox.style.display = 'block';
+  resultBox.style.color = 'var(--error)';
+  resultText.textContent = message;
+  copyBtn.style.display = 'none';
+}
+
+function setProgress(pct, label) {
+  progressFill.style.width = `${pct}%`;
+  progressLabel.textContent = label || '';
+}
+
+function computeProgress(lines) {
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const m = lines[i].match(/(\d+)\/(\d+)/);
+    if (m) {
+      return Math.min(99, Math.round((parseInt(m[1], 10) / parseInt(m[2], 10)) * 100));
+    }
+  }
+  const last = lines[lines.length - 1] || '';
+  if (/Saved/.test(last)) return 100;
+  if (/Encoding|Merging/.test(last)) return 85;
+  if (/Searching|Reading|Downloaded/.test(last)) return 20;
+  return 5;
+}
+
+function endJobUI() {
+  goBtn.disabled = false;
+  cancelBtn.style.display = 'none';
+  cancelBtn.disabled = false;
+  progressWrap.style.display = 'none';
+  currentJobId = null;
+}
+
+const HISTORY_KEY = 'audio_grabber_history';
+
+function loadHistory() {
+  try {
+    return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+  } catch (e) {
+    return [];
+  }
+}
+
+function pushHistory(path, format) {
+  const history = loadHistory();
+  const name = path.split(/[\\/]/).pop();
+  history.unshift({name, path, format, time: Date.now()});
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 20)));
+  renderHistory();
+}
+
+function renderHistory() {
+  const history = loadHistory();
+  historyCount.textContent = history.length;
+  historyList.innerHTML = '';
+  history.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'history-row';
+    const nameEl = document.createElement('div');
+    nameEl.className = 'history-name';
+    nameEl.textContent = item.name;
+    const metaEl = document.createElement('div');
+    metaEl.className = 'history-meta';
+    metaEl.textContent = `${item.format} · ${new Date(item.time).toLocaleDateString()}`;
+    row.appendChild(nameEl);
+    row.appendChild(metaEl);
+    row.title = item.path;
+    row.addEventListener('click', () => {
+      navigator.clipboard.writeText(item.path).catch(() => {});
+    });
+    historyList.appendChild(row);
+  });
+}
+
+function notifyDone(path) {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'granted') {
+    new Notification('Download complete', {body: path});
+  } else if (Notification.permission === 'default' && !notifyAsked) {
+    notifyAsked = true;
+    Notification.requestPermission();
+  }
+}
+
+async function poll() {
+  if (!currentJobId) return;
+  const jobId = currentJobId;
+  const res = await fetch(`/api/status/${jobId}`);
+  const data = await res.json();
+  logBox.textContent = data.log.join('\n');
+  logBox.scrollTop = logBox.scrollHeight;
+  setProgress(computeProgress(data.log), data.log[data.log.length - 1]);
+  if (!data.done) {
+    setTimeout(poll, 700);
+    return;
+  }
+  endJobUI();
+  resultBox.style.display = 'block';
+  if (data.error) {
+    resultBox.style.color = 'var(--error)';
+    resultText.textContent = `Error: ${data.error}`;
+    copyBtn.style.display = 'none';
+    return;
+  }
+  resultBox.style.color = 'var(--text)';
+  let text = `Saved: ${data.file}`;
+  if (data.tracklist && data.tracklist.length) {
+    const list = data.tracklist.map((t, i) => `${i + 1}. ${t.name} - ${t.artist}`).join('\n');
+    text += `\n\ntracklist:\n${list}`;
+  }
+  resultText.textContent = text;
+  copyBtn.style.display = 'inline-block';
+  copyBtn.dataset.path = data.file;
+  pushHistory(data.file, formatSel.value);
+  notifyDone(data.file);
+}
+
+async function runJob(endpoint, body) {
+  goBtn.disabled = true;
+  cancelBtn.style.display = 'inline-block';
+  resetPanels();
+  progressWrap.style.display = 'flex';
+  setProgress(5, 'starting...');
+  let res;
+  try {
+    res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body),
+    });
+  } catch (e) {
+    showError('Could not reach the server.');
+    endJobUI();
+    return;
+  }
+  const data = await res.json();
+  if (!res.ok) {
+    showError(`Error: ${data.error || 'unknown error'}`);
+    endJobUI();
+    return;
+  }
+  currentJobId = data.job_id;
+  poll();
+}
+
+goBtn.addEventListener('click', () => {
+  if (activeTab === 'single') {
+    const query = queryInput.value.trim();
+    if (!query) return;
+    runJob('/api/process', {
+      query,
+      format: formatSel.value,
+      name: singleNameInput.value.trim(),
+      output_dir: outputDirOverride.value.trim(),
+    });
+  } else {
+    const raw = tracklistText.value.trim();
+    if (!raw) return;
+    const parsed = parseTracklistInput(raw);
+    if (!parsed.length) {
+      showError('Could not find any songs in that. Use "Artist - Title" per line, or JSON.');
+      return;
+    }
+    runJob('/api/process_tracklist', {
+      tracklist: parsed,
+      format: formatSel.value,
+      name: tracklistNameInput.value.trim(),
+      output_dir: outputDirOverride.value.trim(),
+    });
+  }
+});
+
+cancelBtn.addEventListener('click', async () => {
+  if (!currentJobId) return;
+  cancelBtn.disabled = true;
+  await fetch(`/api/cancel/${currentJobId}`, {method: 'POST'});
+});
+
+copyBtn.addEventListener('click', async () => {
+  const path = copyBtn.dataset.path;
+  if (!path) return;
+  try {
+    await navigator.clipboard.writeText(path);
+    const original = copyBtn.textContent;
+    copyBtn.textContent = 'copied';
+    setTimeout(() => { copyBtn.textContent = original; }, 1200);
+  } catch (e) {}
+});
+
+queryInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') goBtn.click();
+});
+tracklistText.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') goBtn.click();
+});
+
+const FORMAT_KEY = 'audio_grabber_format';
+const savedFormat = localStorage.getItem(FORMAT_KEY);
+if (savedFormat) formatSel.value = savedFormat;
+formatSel.addEventListener('change', () => localStorage.setItem(FORMAT_KEY, formatSel.value));
+
+async function loadOutputDir() {
+  try {
+    const res = await fetch('/api/downloads_folder');
+    const data = await res.json();
+    outputDirDisplay.textContent = data.path;
+  } catch (e) {
+    outputDirDisplay.textContent = 'Downloads';
+  }
+}
+
+loadOutputDir();
+renderHistory();
+</script>
+</body>
+</html>
