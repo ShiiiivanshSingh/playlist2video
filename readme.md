@@ -5,8 +5,8 @@ Download any song, YouTube playlist, or Spotify tracklist as high-quality audio 
 ---
 <div align="center">
 
+<img width="1920" height="1536" alt="screenshot-studio-1785327807780" src="https://github.com/user-attachments/assets/28995792-dd97-4df6-a221-66a5ac1eb9df" />
 
-<img src="https://github.com/user-attachments/assets/4f78f8bf-6d32-4293-8399-3c39e494c3a6" alt="Logo" width="500" />
 
 # Final Product!
 
@@ -158,3 +158,6 @@ master repo/
 - **Spotify links** are not supported directly (Spotify blocks the API for free tier). Use the tracklist tab / `--tracklist` flag with a JSON file instead.
 - The server runs locally on `127.0.0.1:8888` — it is **not** meant to be exposed to the internet.
 - For long playlists, the video encoding step can take several minutes. The progress bar in the web UI and the `Video encoding: X%` output in the CLI show live progress.
+like this
+<img width="627" height="82" alt="image" src="https://github.com/user-attachments/assets/f88a8873-bb63-4727-aa0c-c24c7c6093ad" />
+
