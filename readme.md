@@ -1,6 +1,6 @@
 # 🎵→🎬 playlist2video !
 
-Download any song, YouTube playlist, or Spotify playli as high-quality audio and  turn it into a ** MP4 video** with a background image. All in one workflow, no switching between tools!!
+YouTube/Spotify playlists → MP3/FLAC audio or MP4 video with a background image. Web UI + CLI, built on yt-dlp + ffmpeg!!
 
 ---
 <div align="center">
