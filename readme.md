@@ -5,7 +5,7 @@ Download any song, YouTube playlist, or Spotify tracklist as high-quality audio 
 ---
 <div align="center">
 
-<img width="1920" height="1536" alt="screenshot-studio-1785327807780" src="https://github.com/user-attachments/assets/28995792-dd97-4df6-a221-66a5ac1eb9df" />
+<img width="1920" height="1536" alt="146_1x_shots_so" src="https://github.com/user-attachments/assets/8fbcb985-8abb-4d6e-ae83-c6514d02f05d" />
 
 
 # Final Product!
