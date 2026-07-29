@@ -1,11 +1,11 @@
-# 🎵→🎬 Audio Grabber + Video Maker
+# 🎵→🎬 playlist2video !
 
-Download any song, YouTube playlist, or Spotify tracklist as high-quality audio — and optionally turn it into a **1920×1080 MP4 video** with a background image. All in one workflow, no switching between tools.
+Download any song, YouTube playlist, or Spotify playli as high-quality audio and  turn it into a ** MP4 video** with a background image. All in one workflow, no switching between tools!!
 
 ---
 <div align="center">
-
-<img width="1920" height="1536" alt="146_1x_shots_so" src="https://github.com/user-attachments/assets/8fbcb985-8abb-4d6e-ae83-c6514d02f05d" />
+  
+<img width="1920" height="1536" alt="995_1x_shots_so" src="https://github.com/user-attachments/assets/36474f86-2186-4dd5-83c5-d3f76aa3d0fe" />
 
 
 # Final Product!
@@ -13,6 +13,7 @@ Download any song, YouTube playlist, or Spotify tracklist as high-quality audio 
 <img src="https://github.com/user-attachments/assets/d7463f9e-e24e-4440-8f64-119856bb979c" alt="Final Product" width="700" />
 
 </div>
+
 ## Features
 
 | | Audio mode | Video mode |
