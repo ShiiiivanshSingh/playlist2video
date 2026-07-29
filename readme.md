@@ -3,7 +3,16 @@
 Download any song, YouTube playlist, or Spotify tracklist as high-quality audio — and optionally turn it into a **1920×1080 MP4 video** with a background image. All in one workflow, no switching between tools.
 
 ---
+<div align="center">
 
+
+<img src="https://github.com/user-attachments/assets/4f78f8bf-6d32-4293-8399-3c39e494c3a6" alt="Logo" width="500" />
+
+# Final Product!
+
+<img src="https://github.com/user-attachments/assets/d7463f9e-e24e-4440-8f64-119856bb979c" alt="Final Product" width="700" />
+
+</div>
 ## Features
 
 | | Audio mode | Video mode |
