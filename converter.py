@@ -2,12 +2,12 @@
 converter.py
 ------------
 All the "heavy lifting" for turning an audio file + a static image into
-a 1080p H.264/AAC MP4. No GUI code lives here on purpose, so it can be
+a 720p H.264/AAC MP4. No GUI code lives here on purpose, so it can be
 reused from a script or tested independently of Tkinter.
 
 Pipeline:
     1. get_media_duration()      -> ask ffprobe how long the audio is
-    2. prepare_background_image() -> Pillow: scale + center-crop to 1920x1080
+    2. prepare_background_image() -> Pillow: scale + center-crop to 1280x720
     3. build_ffmpeg_cmd()        -> assemble the ffmpeg command line
     4. run_ffmpeg_with_progress() -> run it, streaming progress back to caller
 """
@@ -24,7 +24,7 @@ from typing import Callable, Optional
 
 from PIL import Image
 
-TARGET_SIZE = (1920, 1080)  # Full HD, fixed per the spec
+TARGET_SIZE = (1280, 720)  # 720p HD
 
 
 # --------------------------------------------------------------------------- #
@@ -94,7 +94,7 @@ def prepare_background_image(image_path: str, output_path: str,
 # ffmpeg command construction
 # --------------------------------------------------------------------------- #
 def build_ffmpeg_cmd(image_path: str, audio_path: str, output_path: str,
-                      duration: float, video_bitrate: str = "8M",
+                      duration: float, video_bitrate: str = "5M",
                       audio_bitrate: str = "192k") -> list[str]:
     """
     Build the ffmpeg argument list.

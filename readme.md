@@ -17,9 +17,9 @@ Download any song, YouTube playlist, or Spotify tracklist as high-quality audio 
 
 | | Audio mode | Video mode |
 |---|---|---|
-| Single song (search or URL) | ✅ MP3 / FLAC | ✅ 1080p MP4 |
-| YouTube playlist | ✅ merged file | ✅ 1080p MP4 |
-| Spotify / JSON tracklist | ✅ merged file | ✅ 1080p MP4 |
+| Single song (search or URL) | ✅ MP3 / FLAC | ✅ 720p MP4 |
+| YouTube playlist | ✅ merged file | ✅ 720p MP4 |
+| Spotify / JSON tracklist | ✅ merged file | ✅ 720p MP4 |
 | Interface | Web UI + CLI | Web UI + CLI |
 
 ---
@@ -54,7 +54,7 @@ Open **http://127.0.0.1:8888** in your browser.
 3. Hit **go**
 
 ### Audio → Video (1080p MP4)
-1. Flip the **"audio only"** toggle → it becomes **"make video (1080p mp4)"**
+1. Flip the **"audio only"** toggle → it becomes **"make video (720p mp4)"**
 2. Drop or browse a background image (PNG / JPG / WEBP / BMP)
 3. Enter your song / playlist / tracklist as usual
 4. Hit **go** — the app downloads the audio, then encodes the MP4 automatically
@@ -145,9 +145,9 @@ master repo/
 |---|---|
 | MP3 bitrate | 320 kbps (CBR) |
 | FLAC | Lossless, 44100 Hz stereo |
-| Video resolution | 1920 × 1080 (Full HD) |
+| Video resolution | 1280 × 720 (HD 720p) |
 | Video codec | H.264 (`libx264`), preset `medium` |
-| Video bitrate | 8 Mbps |
+| Video bitrate | 5 Mbps |
 | Audio in video | AAC, 192 kbps, 48000 Hz |
 | Background image | Auto scale + center-crop, no letterboxing |
 
